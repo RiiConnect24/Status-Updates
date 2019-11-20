@@ -99,6 +99,8 @@ class StatuspageAPI
                 System.exit(-1);
             }
         }, 0, 3, TimeUnit.MINUTES);
+        
+        LOG.info("Successfully initialized!");
     }
 
     @SuppressWarnings("ConstantConditions")
