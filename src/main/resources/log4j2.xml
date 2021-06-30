@@ -5,15 +5,19 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout disableAnsi="false" pattern="[%d{dd-MM-YYYY HH:mm:ss}] [%style{%t}{bright,cyan}] [%style{%c{1}}{green}] [%level] - %msg%n" />
         </Console>
+
+        <Sentry name="Sentry" />
     </Appenders>
 
     <Loggers>
         <Root level="trace">
             <AppenderRef ref="Console" level="info" />
+            <AppenderRef ref="Sentry"/>
         </Root>
 
         <Logger name="org.eclipse.jetty" level="error" additivity="false">
             <AppenderRef ref="Console" />
+            <AppenderRef ref="Sentry"/>
         </Logger>
     </Loggers>
 </Configuration>
