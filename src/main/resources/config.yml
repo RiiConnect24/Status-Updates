@@ -5,3 +5,7 @@ watchedPages:
     statusWebhook: ""
     incidentsWebhook: ""
     statusMessageId: 0
+
+webhookServerPort: 8080
+incidentWebhooks:
+  "": ""

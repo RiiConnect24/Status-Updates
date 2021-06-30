@@ -11,6 +11,9 @@ public class Incident
     @SerializedName("name")
     public String name;
 
+    @SerializedName("shortlink")
+    public String url;
+
     @SerializedName("created_at")
     public Timestamp createdAt;
 
@@ -72,19 +75,33 @@ public class Incident
     public enum Status
     {
         @SerializedName("investigating")
-        INVESTIGATING("Investigating"),
+        INVESTIGATING(Constants.RED, Constants.RED_EMOTE, "Investigating"),
         @SerializedName("identified")
-        IDENTIFIED("Identified"),
+        IDENTIFIED(Constants.YELLOW, Constants.YELLOW_EMOTE, "Identified"),
         @SerializedName("monitoring")
-        MONITORING("Monitoring"),
+        MONITORING(Constants.YELLOW, Constants.YELLOW_EMOTE, "Monitoring"),
         @SerializedName("resolved")
-        RESOLVED("Resolved");
+        RESOLVED(Constants.GREEN, Constants.GREEN_EMOTE, "Resolved");
 
+        private final int color;
+        private final String emote;
         private final String name;
 
-        Status(String name)
+        Status(int color, String emote, String name)
         {
+            this.color = color;
+            this.emote = emote;
             this.name = name;
+        }
+
+        public int getColor()
+        {
+            return color;
+        }
+
+        public String getEmote()
+        {
+            return emote;
         }
 
         public String getName()

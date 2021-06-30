@@ -7,6 +7,8 @@ public class Constants
     public static final String RED_EMOTE    = "<:dnd:859528026345570345>";
     public static final String GRAY_EMOTE   = "<:offline:859527933936926751>";
 
+    public static final String EMOTE_URL = "https://cdn.discordapp.com/emojis/%s.png";
+
     public static final int GREEN  = 0x43b581;
     public static final int YELLOW = 0xfaa61a;
     public static final int RED    = 0xf04747;

@@ -41,6 +41,8 @@ public class StatusApp
         // Start task
         Executors.newSingleThreadScheduledExecutor()
                 .scheduleWithFixedDelay(new StatuspageWatcher(this), 5, 5 * 60, TimeUnit.SECONDS);
+
+        new IncidentsServer(this);
     }
 
     public Config getConfig()
