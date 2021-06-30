@@ -14,6 +14,7 @@ import java.nio.file.Path;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static xyz.rc24.status.StatusApp.LOGGER;
 
 public class ConfigLoader
 {
@@ -36,7 +37,7 @@ public class ConfigLoader
             }
             catch(Exception e) {throw new RuntimeException("Failed to copy default config.yml file:", e);}
 
-            System.out.println("The config file has been created. Populate it with the correct options.");
+            LOGGER.info("The config file has been created. Populate it with the correct options.");
             System.exit(1);
         }
 

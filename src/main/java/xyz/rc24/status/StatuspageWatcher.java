@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static xyz.rc24.status.StatusApp.LOGGER;
 import static xyz.rc24.status.StatusApp.Webhooks;
 
 public class StatuspageWatcher implements Runnable
@@ -43,6 +44,7 @@ public class StatuspageWatcher implements Runnable
     {
         for(Config.WatchedPage config : app.getConfig().watchedPages)
         {
+            LOGGER.info("Updating status for {}...", config.name);
             Webhooks clients = app.getClients().get(config.id);
             app.getThreadPool().submit(() ->
             {

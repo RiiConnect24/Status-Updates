@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="WARN" packages="io.sentry.log4j2">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout disableAnsi="false" pattern="[%d{dd-MM-YYYY HH:mm:ss}] [%style{%t}{bright,cyan}] [%style{%c{1}}{green}] [%level] - %msg%n" />
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="Console" level="info" />
+        </Root>
+
+        <Logger name="org.eclipse.jetty" level="error" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+    </Loggers>
+</Configuration>

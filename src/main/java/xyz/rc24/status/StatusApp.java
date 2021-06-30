@@ -5,6 +5,8 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.send.AllowedMentions;
 import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.rc24.status.config.Config;
 import xyz.rc24.status.config.ConfigLoader;
 
@@ -72,7 +74,7 @@ public class StatusApp
 
     public static void main(String[] args)
     {
-        System.out.println("Initializing...");
+        LOGGER.info("Initializing...");
         new StatusApp();
     }
 
@@ -111,4 +113,6 @@ public class StatusApp
             return status;
         }
     }
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(StatusApp.class);
 }
