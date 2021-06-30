@@ -1,4 +1,4 @@
-package xyz.rc24.status;
+package xyz.rc24.status.actions;
 
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbed.EmbedFooter;
@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
+import xyz.rc24.status.Constants;
+import xyz.rc24.status.StatusApp;
 import xyz.rc24.status.model.Incident;
 
 import java.time.OffsetDateTime;

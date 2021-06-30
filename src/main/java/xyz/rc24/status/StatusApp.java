@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.rc24.status.actions.IncidentsServer;
+import xyz.rc24.status.actions.StatuspageWatcher;
 import xyz.rc24.status.config.Config;
 import xyz.rc24.status.config.ConfigLoader;
 

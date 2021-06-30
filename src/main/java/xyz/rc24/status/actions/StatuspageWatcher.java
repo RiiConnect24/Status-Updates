@@ -1,4 +1,4 @@
-package xyz.rc24.status;
+package xyz.rc24.status.actions;
 
 import club.minnced.discord.webhook.send.AllowedMentions;
 import club.minnced.discord.webhook.send.WebhookEmbed;
@@ -12,6 +12,7 @@ import okhttp3.ResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.rc24.status.StatusApp;
 import xyz.rc24.status.config.Config;
 import xyz.rc24.status.model.Component;
 import xyz.rc24.status.model.Incident;
