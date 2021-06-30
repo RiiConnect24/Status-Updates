@@ -1,6 +1,9 @@
-# Status-Updates
-Webhook that posts RC24 service updates to the RC24 Discord.
+# Status Updates
+Program that checks for updates from a Statuspage.io page
 
-## Credits
-Much of this program's code was taken from jagrosh's [Discord Status Bot](https://gist.github.com/jagrosh/21f69054b407c0f5eff582554127fd7c) 
-with a few modifications to make it work correctly with our status page.
+## Usage
+Git clone this repository and compile it with Java 11 and Maven 3 using `mvn clean package`.
+
+The program's JAR will be located on the `target` folder.
+
+The config file will be generated and you'll need to populate it.
