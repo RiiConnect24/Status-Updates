@@ -1,0 +1,7 @@
+watchedPages:
+  - id: ""
+    name: ""
+    url: ""
+    statusWebhook: ""
+    incidentsWebhook: ""
+    statusMessageId: 0

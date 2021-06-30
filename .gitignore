@@ -28,6 +28,5 @@ hs_err_pid*
 .idea/
 
 # Project
-config.txt
-latest_status.txt
+data/
 dependency-reduced-pom.xml
