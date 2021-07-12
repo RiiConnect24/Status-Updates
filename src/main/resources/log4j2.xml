@@ -34,12 +34,17 @@
     </Appenders>
 
     <Loggers>
-        <Root level="trace">
-            <AppenderRef ref="Console" level="info" />
-            <AppenderRef ref="Sentry"/>
+        <Root level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="Sentry" level="error" />
         </Root>
 
         <Logger name="org.eclipse.jetty" level="error" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="Sentry"/>
+        </Logger>
+
+        <Logger name="spark" level="error" additivity="false">
             <AppenderRef ref="Console" />
             <AppenderRef ref="Sentry"/>
         </Logger>
