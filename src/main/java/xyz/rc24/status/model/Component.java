@@ -38,6 +38,9 @@ public class Component
     @SerializedName("name")
     public String name;
 
+    @SerializedName("group_id")
+    public @Nullable String groupId;
+
     @SerializedName("status")
     public Status status;
 
@@ -90,7 +93,7 @@ public class Component
     @Override
     public String toString()
     {
-        return "Component{" + "name='" + name + '\'' + ", status=" + status + ", isGroup=" + isGroup +
-                ", childComponents=" + childComponents + '}';
+        return "Component{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", groupId='" + groupId + '\'' +
+                ", status=" + status + ", isGroup=" + isGroup + ", childComponents=" + childComponents + '}';
     }
 }

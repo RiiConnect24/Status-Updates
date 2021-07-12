@@ -26,6 +26,8 @@ package xyz.rc24.status.actions;
 
 import club.minnced.discord.webhook.send.AllowedMentions;
 import club.minnced.discord.webhook.send.WebhookEmbed;
+import club.minnced.discord.webhook.send.WebhookEmbed.EmbedField;
+import club.minnced.discord.webhook.send.WebhookEmbed.EmbedTitle;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import club.minnced.discord.webhook.send.WebhookMessage;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
@@ -77,7 +79,7 @@ public class StatuspageWatcher implements Runnable
                 if(page == null) return;
 
                 List<WebhookEmbed> embeds = statusEmbeds(page);
-                clients.getStatus().edit(config.statusMessageId, message(embeds, page.status.description));
+                clients.getStatus().edit(config.statusMessageId, message(embeds));
             });
         }
     }
@@ -106,33 +108,12 @@ public class StatuspageWatcher implements Runnable
     {
         List<WebhookEmbed> embeds = new LinkedList<>();
 
-        for(Component component : statuspage.components)
-        {
-            if(!(component.isGroup) || component.childComponents == null)
-                continue;
-
-            Component.Status status = component.status;
-            var embed = new WebhookEmbedBuilder()
-                    .setTitle(new WebhookEmbed.EmbedTitle(status.getEmote() + " " + component.name + ": " +
-                            status.getName(), null))
-                    .setColor(status.getColor());
-
-            for(String childId : component.childComponents)
-            {
-                Component child = statuspage.getComponentsById().get(childId);
-                Component.Status childStatus = child.status;
-                embed.addField(new WebhookEmbed.EmbedField(true, child.name, childStatus.getEmote() + " " +
-                        childStatus.getName()));
-            }
-
-            embed.setFooter(new WebhookEmbed.EmbedFooter("Last Updated", null));
-            embed.setTimestamp(OffsetDateTime.now());
-            embeds.add(embed.build());
-        }
+        embeds.add(generalEmbed(statuspage));
+        embeds.addAll(groupEmbed(statuspage));
 
         List<Incident> incidents = statuspage.incidents;
         var incidentsEmbed = new WebhookEmbedBuilder()
-                .setTitle(new WebhookEmbed.EmbedTitle(statuspage.status.getEmote() + (incidents.isEmpty() ?
+                .setTitle(new EmbedTitle(statuspage.status.getEmote() + (incidents.isEmpty() ?
                         " No incidents reported" : " Current Incidents:"), null))
                 .setColor(statuspage.status.getColor())
                 .setFooter(new WebhookEmbed.EmbedFooter("Last Updated", null))
@@ -151,7 +132,7 @@ public class StatuspageWatcher implements Runnable
                         .append("\n").append(update.body).append("\n");
             }
 
-            incidentsEmbed.addField(new WebhookEmbed.EmbedField(false, impact.getEmote() + " " + incident.name +
+            incidentsEmbed.addField(new EmbedField(false, impact.getEmote() + " " + incident.name +
                     ": " + impact.getName() + " [" + format.format(incident.createdAt) + "]", description.toString()));
         }
 
@@ -159,11 +140,61 @@ public class StatuspageWatcher implements Runnable
         return embeds;
     }
 
-    private WebhookMessage message(List<WebhookEmbed> embeds, String content)
+    private WebhookEmbed generalEmbed(Statuspage statuspage)
+    {
+        Statuspage.Status pageStatus = statuspage.status;
+        var embed = new WebhookEmbedBuilder()
+                .setTitle(new EmbedTitle(pageStatus.getEmote() + " " + pageStatus.description, null))
+                .setColor(pageStatus.getColor())
+                .setFooter(new WebhookEmbed.EmbedFooter("Last Updated", null))
+                .setTimestamp(OffsetDateTime.now());
+
+        for(Component component : statuspage.components)
+        {
+            if(component.isGroup || !(component.groupId == null))
+                continue;
+
+            Component.Status status = component.status;
+            embed.addField(new EmbedField(true, status.getEmote() + " " + component.name, status.getName()));
+        }
+
+        return embed.build();
+    }
+
+    private List<WebhookEmbed> groupEmbed(Statuspage statuspage)
+    {
+        List<WebhookEmbed> embeds = new LinkedList<>();
+
+        for(Component component : statuspage.components)
+        {
+            if(!(component.isGroup) || component.childComponents == null)
+                continue;
+
+            Component.Status status = component.status;
+            var embed = new WebhookEmbedBuilder()
+                    .setTitle(new EmbedTitle(status.getEmote() + " " + component.name + ": " + status.getName(), null))
+                    .setColor(status.getColor())
+                    .setFooter(new WebhookEmbed.EmbedFooter("Last Updated", null))
+                    .setTimestamp(OffsetDateTime.now());
+
+            for(String childId : component.childComponents)
+            {
+                Component child = statuspage.getComponentsById().get(childId);
+                Component.Status childStatus = child.status;
+                embed.addField(new EmbedField(true, child.name, childStatus.getEmote() + " " +
+                        childStatus.getName()));
+            }
+
+            embeds.add(embed.build());
+        }
+
+        return embeds;
+    }
+
+    private WebhookMessage message(List<WebhookEmbed> embeds)
     {
         return new WebhookMessageBuilder()
                 .addEmbeds(embeds)
-                .setContent(content)
                 .setAllowedMentions(AllowedMentions.none())
                 .build();
     }
