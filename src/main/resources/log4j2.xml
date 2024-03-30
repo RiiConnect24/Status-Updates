@@ -24,7 +24,7 @@
   ~ SOFTWARE.
   -->
 
-<Configuration status="WARN" packages="io.sentry.log4j2">
+<Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout disableAnsi="false" pattern="[%d{dd-MM-YYYY HH:mm:ss}] [%style{%t}{bright,cyan}] [%style{%c{1}}{green}] [%level] - %msg%n" />
