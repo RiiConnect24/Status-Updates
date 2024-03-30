@@ -32,11 +32,11 @@ public enum ComponentStatus
     @SerializedName("degraded_performance")
     DEGRADED_PERFORMANCE(Constants.YELLOW, Constants.YELLOW_EMOTE, "Degraded Performance"),
     @SerializedName("partial_outage")
-    PARTIAL_OUTAGE(Constants.YELLOW, Constants.YELLOW_EMOTE, "Partial Outage"),
+    PARTIAL_OUTAGE(Constants.RED, Constants.RED_EMOTE, "Partial Outage"),
     @SerializedName("major_outage")
-    MAJOR_OUTAGE(Constants.RED, Constants.RED_EMOTE, "Major Outage"),
+    MAJOR_OUTAGE(Constants.BLACK, Constants.GRAY_EMOTE, "Major Outage"),
     @SerializedName("under_maintenance")
-    UNDER_MAINTENANCE(Constants.BLACK, Constants.GRAY_EMOTE, "Under Maintenance");
+    UNDER_MAINTENANCE(Constants.PURPLE, Constants.PURPLE_EMOTE, "Under Maintenance");
 
     private final int color;
     private final String emote;
