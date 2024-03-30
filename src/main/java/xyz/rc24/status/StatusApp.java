@@ -48,7 +48,7 @@ public class StatusApp
     private final Config config;
     private final Gson gson;
     private final OkHttpClient httpClient;
-    private final Map<String, Webhooks> clients;
+    private final Map<String, WebhookClient> clients;
     private final ExecutorService threadPool;
     private final StatuspageWatcher watcher;
 
@@ -64,8 +64,7 @@ public class StatusApp
         for(Config.WatchedPage page : config.watchedPages)
         {
             WebhookClient status = createClient(page.name, page.statusWebhook);
-            WebhookClient incidents = createClient(page.name, page.incidentsWebhook);
-            clients.put(page.id, new Webhooks(incidents, status));
+            clients.put(page.id, status);
         }
 
         // Start task
@@ -90,7 +89,7 @@ public class StatusApp
         return httpClient;
     }
 
-    public Map<String, Webhooks> getClients()
+    public Map<String, WebhookClient> getClients()
     {
         return clients;
     }
@@ -111,11 +110,11 @@ public class StatusApp
         new StatusApp();
     }
 
-    private WebhookClient createClient(String name, String url)
+    public WebhookClient createClient(String name, String url)
     {
         Matcher m = WebhookClientBuilder.WEBHOOK_PATTERN.matcher(url);
-        if(!(m.matches()))
-            throw new IllegalArgumentException(name + " has an invalid webhook uRL: " + url);
+        if(!m.matches())
+            throw new IllegalArgumentException(name + " has an invalid webhook URL: " + url);
 
         return new WebhookClientBuilder(url)
                 .setHttpClient(httpClient)
@@ -123,28 +122,6 @@ public class StatusApp
                 .setWait(false)
                 .setDaemon(true)
                 .build();
-    }
-
-    public static class Webhooks
-    {
-        private final WebhookClient incidents;
-        private final WebhookClient status;
-
-        public Webhooks(WebhookClient incidents, WebhookClient status)
-        {
-            this.incidents = incidents;
-            this.status = status;
-        }
-
-        public WebhookClient getIncidents()
-        {
-            return incidents;
-        }
-
-        public WebhookClient getStatus()
-        {
-            return status;
-        }
     }
 
     public static final Logger LOGGER = LoggerFactory.getLogger(StatusApp.class);

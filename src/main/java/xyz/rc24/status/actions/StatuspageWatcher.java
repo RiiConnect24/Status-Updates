@@ -24,6 +24,7 @@
 
 package xyz.rc24.status.actions;
 
+import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.AllowedMentions;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbed.EmbedField;
@@ -54,7 +55,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static xyz.rc24.status.StatusApp.LOGGER;
-import static xyz.rc24.status.StatusApp.Webhooks;
 
 public class StatuspageWatcher implements Runnable
 {
@@ -89,14 +89,14 @@ public class StatuspageWatcher implements Runnable
     public void refreshPage(Config.WatchedPage config)
     {
         LOGGER.info("Updating status for {}...", config.name);
-        Webhooks clients = app.getClients().get(config.id);
+        WebhookClient client = app.getClients().get(config.id);
         app.getThreadPool().submit(() ->
         {
             Statuspage page = retrieveStatus(config.url);
             if(page == null) return;
 
             List<WebhookEmbed> embeds = statusEmbeds(page);
-            clients.getStatus().edit(config.statusMessageId, message(embeds));
+            client.edit(config.statusMessageId, message(embeds));
         });
     }
 

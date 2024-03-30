@@ -24,6 +24,7 @@
 
 package xyz.rc24.status.actions;
 
+import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbed.EmbedFooter;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
@@ -33,6 +34,7 @@ import spark.Response;
 import spark.Spark;
 import xyz.rc24.status.Constants;
 import xyz.rc24.status.StatusApp;
+import xyz.rc24.status.config.Config;
 import xyz.rc24.status.model.incident.Incident;
 import xyz.rc24.status.model.incident.IncidentStatus;
 
@@ -84,14 +86,23 @@ public class IncidentsServer
         if(!json.has("incident"))
             return;
 
+        Config.WatchedPage config = app.getConfig().watchedPages.stream()
+                .filter(page -> page.id.equals(id)).findFirst().orElse(null);
         Incident incident = app.getGson().fromJson(json.get("incident"), Incident.class);
         Incident.Update update = incident.updates.stream().findFirst().orElse(null);
         if(update == null)
             return;
 
-        StatusApp.LOGGER.info("Received incident update for {}", id);
-        StatusApp.Webhooks clients = app.getClients().get(id);
-        clients.getIncidents().send(embed(incident, update));
+        StatusApp.LOGGER.info("Received incident update for {} ({})",
+                config == null ? "Unknown" : config.name, id);
+        if(config != null)
+        {
+            try(WebhookClient webhook = app.createClient(config.name, config.incidentsWebhook))
+            {
+                webhook.send(embed(incident, update));
+            }
+        }
+
         app.getWatcher().refreshPage(id); // trigger an update
     }
 
