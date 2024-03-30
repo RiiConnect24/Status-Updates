@@ -28,7 +28,7 @@
 
     <groupId>xyz.rc24</groupId>
     <artifactId>status-updates</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0</version>
 
     <name>Status-Updates</name>
 	
