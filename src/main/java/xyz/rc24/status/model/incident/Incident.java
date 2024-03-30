@@ -54,20 +54,25 @@ public class Incident
         @SerializedName("body")
         public String body;
 
-        @SerializedName("updated_at")
-        public Timestamp updatedAt;
-
         @Override
         public String toString()
         {
-            return "Update{" + "status=" + status + ", body='" + body + '\'' + ", updatedAt=" + updatedAt + '}';
+            return "Update{" +
+                    "status=" + status +
+                    ", body='" + body + '\'' +
+                    '}';
         }
     }
 
     @Override
     public String toString()
     {
-        return "Incident{" + "name='" + name + '\'' + ", createdAt=" + createdAt +
-                ", impact=" + impact + ", updates=" + updates + '}';
+        return "Incident{" +
+                "name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", createdAt=" + createdAt +
+                ", impact=" + impact +
+                ", updates=" + updates +
+                '}';
     }
 }

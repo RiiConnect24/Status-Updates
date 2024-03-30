@@ -47,8 +47,8 @@ public class Statuspage
     @SerializedName("incidents")
     public List<Incident> incidents;
 
-    /*@SerializedName("scheduled_maintenances")
-    public List<ScheduledMaintenance> scheduledMaintenances;*/
+    @SerializedName("scheduled_maintenances")
+    public List<ScheduledMaintenance> scheduledMaintenances;
 
     @SerializedName("status")
     public Status status;
@@ -57,7 +57,7 @@ public class Statuspage
 
     public Map<String, Component> getComponentsById()
     {
-        if(!(componentsById == null))
+        if(componentsById != null)
             return componentsById;
 
         Map<String, Component> map = new HashMap<>();

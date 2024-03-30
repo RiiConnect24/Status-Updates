@@ -39,8 +39,10 @@ import okhttp3.ResponseBody;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.rc24.status.Constants;
 import xyz.rc24.status.StatusApp;
 import xyz.rc24.status.config.Config;
+import xyz.rc24.status.model.ScheduledMaintenance;
 import xyz.rc24.status.model.Statuspage;
 import xyz.rc24.status.model.component.Component;
 import xyz.rc24.status.model.component.ComponentStatus;
@@ -49,7 +51,6 @@ import xyz.rc24.status.model.incident.IncidentImpact;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -143,19 +144,42 @@ public class StatuspageWatcher implements Runnable
         {
             IncidentImpact impact = incident.impact;
             StringBuilder description = new StringBuilder();
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm z");
 
             for(Incident.Update update : incident.updates.stream().limit(5).toList())
             {
-                description.append("▫**").append(update.status.getName()).append("**: ")
+                description.append("▫ **").append(update.status.getName()).append("**: ")
                         .append("\n").append(update.body).append("\n");
             }
 
             incidentsEmbed.addField(new EmbedField(false, impact.getEmote() + " " + incident.name +
-                    ": " + impact.getName() + " [" + format.format(incident.createdAt) + "]", description.toString()));
+                    ": " + impact.getName() + " [<t:" + incident.createdAt.toInstant().getEpochSecond() + ":F>]", description.toString()));
+        }
+
+        List<ScheduledMaintenance> maintenances = statuspage.scheduledMaintenances;
+        var maintenancesEmbed = new WebhookEmbedBuilder()
+                .setTitle(new EmbedTitle((maintenances.isEmpty() ? statuspage.status.getEmote() : Constants.PURPLE_EMOTE)
+                        + (maintenances.isEmpty() ? " No scheduled maintenances" : " Scheduled Maintenances:"), null))
+                .setColor(maintenances.isEmpty() ? statuspage.status.getColor() : Constants.PURPLE)
+                .setFooter(new WebhookEmbed.EmbedFooter("Last Updated", null))
+                .setTimestamp(OffsetDateTime.now());
+
+        // maintenances
+        for(ScheduledMaintenance maintenance : maintenances)
+        {
+            StringBuilder description = new StringBuilder();
+
+            for(ScheduledMaintenance.Update update : maintenance.updates.stream().limit(5).toList())
+            {
+                description.append("▫ **").append(update.status.getName()).append("**: ")
+                        .append("\n").append(update.body).append("\n");
+            }
+
+            maintenancesEmbed.addField(new EmbedField(false, maintenance.name + " [<t:" +
+                    maintenance.scheduledFor.toInstant().getEpochSecond() + ":F>]", description.toString()));
         }
 
         embeds.add(incidentsEmbed.build());
+        embeds.add(maintenancesEmbed.build());
         return embeds;
     }
 
