@@ -26,6 +26,8 @@ package xyz.rc24.status.model;
 
 import com.google.gson.annotations.SerializedName;
 import xyz.rc24.status.Constants;
+import xyz.rc24.status.model.component.Component;
+import xyz.rc24.status.model.incident.Incident;
 
 import java.util.HashMap;
 import java.util.List;

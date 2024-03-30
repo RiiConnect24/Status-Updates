@@ -33,7 +33,8 @@ import spark.Response;
 import spark.Spark;
 import xyz.rc24.status.Constants;
 import xyz.rc24.status.StatusApp;
-import xyz.rc24.status.model.Incident;
+import xyz.rc24.status.model.incident.Incident;
+import xyz.rc24.status.model.incident.IncidentStatus;
 
 import java.time.OffsetDateTime;
 
@@ -96,7 +97,7 @@ public class IncidentsServer
 
     private WebhookEmbed embed(Incident incident, Incident.Update update)
     {
-        Incident.Status status = update.status;
+        IncidentStatus status = update.status;
         String emote = status.getEmote().replaceAll("<a?:\\w+:(\\d+)>", "$1");
 
         return new WebhookEmbedBuilder()

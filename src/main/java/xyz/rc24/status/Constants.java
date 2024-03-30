@@ -30,6 +30,7 @@ public class Constants
     public static final String YELLOW_EMOTE = "<:idle:859528035027124264>";
     public static final String RED_EMOTE    = "<:dnd:859528026345570345>";
     public static final String GRAY_EMOTE   = "<:offline:859527933936926751>";
+    public static final String PURPLE_EMOTE = "<:streaming:1223435764642222161>";
 
     public static final String EMOTE_URL = "https://cdn.discordapp.com/emojis/%s.png";
 
@@ -37,4 +38,5 @@ public class Constants
     public static final int YELLOW = 0xfaa61a;
     public static final int RED    = 0xf04747;
     public static final int BLACK  = 0x000000;
+    public static final int PURPLE = 0x593695;
 }

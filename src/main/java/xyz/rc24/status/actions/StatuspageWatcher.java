@@ -40,9 +40,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xyz.rc24.status.StatusApp;
 import xyz.rc24.status.config.Config;
-import xyz.rc24.status.model.Component;
-import xyz.rc24.status.model.Incident;
 import xyz.rc24.status.model.Statuspage;
+import xyz.rc24.status.model.component.Component;
+import xyz.rc24.status.model.component.ComponentStatus;
+import xyz.rc24.status.model.incident.Incident;
+import xyz.rc24.status.model.incident.IncidentImpact;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -50,7 +52,6 @@ import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static xyz.rc24.status.StatusApp.LOGGER;
 import static xyz.rc24.status.StatusApp.Webhooks;
@@ -70,18 +71,33 @@ public class StatuspageWatcher implements Runnable
     public void run()
     {
         for(Config.WatchedPage config : app.getConfig().watchedPages)
-        {
-            LOGGER.info("Updating status for {}...", config.name);
-            Webhooks clients = app.getClients().get(config.id);
-            app.getThreadPool().submit(() ->
-            {
-                Statuspage page = retrieveStatus(config.url);
-                if(page == null) return;
+            refreshPage(config);
+    }
 
-                List<WebhookEmbed> embeds = statusEmbeds(page);
-                clients.getStatus().edit(config.statusMessageId, message(embeds));
-            });
+    public void refreshPage(String id)
+    {
+        for(Config.WatchedPage config : app.getConfig().watchedPages)
+        {
+            if(config.id.equals(id))
+            {
+                refreshPage(config);
+                break;
+            }
         }
+    }
+
+    public void refreshPage(Config.WatchedPage config)
+    {
+        LOGGER.info("Updating status for {}...", config.name);
+        Webhooks clients = app.getClients().get(config.id);
+        app.getThreadPool().submit(() ->
+        {
+            Statuspage page = retrieveStatus(config.url);
+            if(page == null) return;
+
+            List<WebhookEmbed> embeds = statusEmbeds(page);
+            clients.getStatus().edit(config.statusMessageId, message(embeds));
+        });
     }
 
     @Nullable
@@ -94,8 +110,11 @@ public class StatuspageWatcher implements Runnable
             if(!(response.isSuccessful()) || body == null)
                 throw new IOException("Response unsuccessful. Status code: " + response.code());
 
-            try(var isReader = new InputStreamReader(body.byteStream()); var jsonReader = new JsonReader(isReader))
-            {return app.getGson().fromJson(jsonReader, Statuspage.class);}
+            try(var isReader = new InputStreamReader(body.byteStream());
+                var jsonReader = new JsonReader(isReader))
+            {
+                return app.getGson().fromJson(jsonReader, Statuspage.class);
+            }
         }
         catch(Exception e)
         {
@@ -122,11 +141,11 @@ public class StatuspageWatcher implements Runnable
         // incidents
         for(Incident incident : incidents)
         {
-            Incident.Impact impact = incident.impact;
+            IncidentImpact impact = incident.impact;
             StringBuilder description = new StringBuilder();
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm z");
 
-            for(Incident.Update update : incident.updates.stream().limit(5).collect(Collectors.toList()))
+            for(Incident.Update update : incident.updates.stream().limit(5).toList())
             {
                 description.append("▫**").append(update.status.getName()).append("**: ")
                         .append("\n").append(update.body).append("\n");
@@ -154,7 +173,7 @@ public class StatuspageWatcher implements Runnable
             if(component.isGroup || !(component.groupId == null))
                 continue;
 
-            Component.Status status = component.status;
+            ComponentStatus status = component.status;
             embed.addField(new EmbedField(true, status.getEmote() + " " + component.name, status.getName()));
         }
 
@@ -170,7 +189,7 @@ public class StatuspageWatcher implements Runnable
             if(!(component.isGroup) || component.childComponents == null)
                 continue;
 
-            Component.Status status = component.status;
+            ComponentStatus status = component.status;
             var embed = new WebhookEmbedBuilder()
                     .setTitle(new EmbedTitle(status.getEmote() + " " + component.name + ": " + status.getName(), null))
                     .setColor(status.getColor())
@@ -180,7 +199,7 @@ public class StatuspageWatcher implements Runnable
             for(String childId : component.childComponents)
             {
                 Component child = statuspage.getComponentsById().get(childId);
-                Component.Status childStatus = child.status;
+                ComponentStatus childStatus = child.status;
                 embed.addField(new EmbedField(true, child.name, childStatus.getEmote() + " " +
                         childStatus.getName()));
             }
