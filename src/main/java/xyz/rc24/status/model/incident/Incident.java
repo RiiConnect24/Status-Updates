@@ -25,6 +25,7 @@
 package xyz.rc24.status.model.incident;
 
 import com.google.gson.annotations.SerializedName;
+import xyz.rc24.status.model.Impact;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -41,7 +42,7 @@ public class Incident
     public Timestamp createdAt;
 
     @SerializedName("impact")
-    public IncidentImpact impact;
+    public Impact impact;
 
     @SerializedName("incident_updates")
     public List<Update> updates;

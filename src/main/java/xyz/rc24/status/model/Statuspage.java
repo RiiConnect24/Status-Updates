@@ -25,7 +25,6 @@
 package xyz.rc24.status.model;
 
 import com.google.gson.annotations.SerializedName;
-import xyz.rc24.status.Constants;
 import xyz.rc24.status.model.component.Component;
 import xyz.rc24.status.model.incident.Incident;
 
@@ -37,9 +36,6 @@ public class Statuspage
 {
     @SerializedName("page.name")
     public String name;
-
-    @SerializedName("page.url")
-    public String url;
 
     @SerializedName("components")
     public List<Component> components;
@@ -71,54 +67,31 @@ public class Statuspage
     public static class Status
     {
         @SerializedName("indicator")
-        public String indicator;
+        public Impact indicator;
 
         @SerializedName("description")
         public String description;
 
-        public int getColor()
-        {
-            switch(indicator)
-            {
-                case "none":
-                    return Constants.GREEN;
-                case "minor":
-                    return Constants.YELLOW;
-                case "major":
-                case "critical":
-                    return Constants.RED;
-            }
-
-            return Constants.BLACK;
-        }
-
-        public String getEmote()
-        {
-            switch(indicator)
-            {
-                case "none":
-                    return Constants.GREEN_EMOTE;
-                case "minor":
-                    return Constants.YELLOW_EMOTE;
-                case "major":
-                case "critical":
-                    return Constants.RED_EMOTE;
-            }
-
-            return "";
-        }
-
         @Override
         public String toString()
         {
-            return "Status{" + "indicator='" + indicator + '\'' + ", description='" + description + '\'' + '}';
+            return "Status{" +
+                    "indicator=" + indicator +
+                    ", description='" + description + '\'' +
+                    '}';
         }
     }
 
     @Override
     public String toString()
     {
-        return "Statuspage{" + "name='" + name + '\'' + ", url='" + url + '\'' + ", components=" +
-                components + ", incidents=" + incidents + ", status=" + status + '}';
+        return "Statuspage{" +
+                "name='" + name + '\'' +
+                ", components=" + components +
+                ", incidents=" + incidents +
+                ", scheduledMaintenances=" + scheduledMaintenances +
+                ", status=" + status +
+                ", componentsById=" + componentsById +
+                '}';
     }
 }

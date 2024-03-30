@@ -47,7 +47,7 @@ import xyz.rc24.status.model.Statuspage;
 import xyz.rc24.status.model.component.Component;
 import xyz.rc24.status.model.component.ComponentStatus;
 import xyz.rc24.status.model.incident.Incident;
-import xyz.rc24.status.model.incident.IncidentImpact;
+import xyz.rc24.status.model.Impact;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -133,16 +133,16 @@ public class StatuspageWatcher implements Runnable
 
         List<Incident> incidents = statuspage.incidents;
         var incidentsEmbed = new WebhookEmbedBuilder()
-                .setTitle(new EmbedTitle(statuspage.status.getEmote() + (incidents.isEmpty() ?
+                .setTitle(new EmbedTitle(statuspage.status.indicator.getEmote() + (incidents.isEmpty() ?
                         " No incidents reported" : " Current Incidents:"), null))
-                .setColor(statuspage.status.getColor())
+                .setColor(statuspage.status.indicator.getColor())
                 .setFooter(new WebhookEmbed.EmbedFooter("Last Updated", null))
                 .setTimestamp(OffsetDateTime.now());
 
         // incidents
         for(Incident incident : incidents)
         {
-            IncidentImpact impact = incident.impact;
+            Impact impact = incident.impact;
             StringBuilder description = new StringBuilder();
 
             for(Incident.Update update : incident.updates.stream().limit(5).toList())
@@ -157,9 +157,9 @@ public class StatuspageWatcher implements Runnable
 
         List<ScheduledMaintenance> maintenances = statuspage.scheduledMaintenances;
         var maintenancesEmbed = new WebhookEmbedBuilder()
-                .setTitle(new EmbedTitle((maintenances.isEmpty() ? statuspage.status.getEmote() : Constants.PURPLE_EMOTE)
+                .setTitle(new EmbedTitle((maintenances.isEmpty() ? statuspage.status.indicator.getEmote() : Constants.PURPLE_EMOTE)
                         + (maintenances.isEmpty() ? " No scheduled maintenances" : " Scheduled Maintenances:"), null))
-                .setColor(maintenances.isEmpty() ? statuspage.status.getColor() : Constants.PURPLE)
+                .setColor(maintenances.isEmpty() ? statuspage.status.indicator.getColor() : Constants.PURPLE)
                 .setFooter(new WebhookEmbed.EmbedFooter("Last Updated", null))
                 .setTimestamp(OffsetDateTime.now());
 
@@ -187,8 +187,8 @@ public class StatuspageWatcher implements Runnable
     {
         Statuspage.Status pageStatus = statuspage.status;
         var embed = new WebhookEmbedBuilder()
-                .setTitle(new EmbedTitle(pageStatus.getEmote() + " " + pageStatus.description, null))
-                .setColor(pageStatus.getColor())
+                .setTitle(new EmbedTitle(pageStatus.indicator.getEmote() + " " + pageStatus.description, null))
+                .setColor(pageStatus.indicator.getColor())
                 .setFooter(new WebhookEmbed.EmbedFooter("Last Updated", null))
                 .setTimestamp(OffsetDateTime.now());
 
