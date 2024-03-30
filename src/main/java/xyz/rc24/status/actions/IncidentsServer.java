@@ -58,36 +58,40 @@ public class IncidentsServer
 
         if(id == null || id.isEmpty() || token == null || token.isEmpty())
             halt(400, "Page ID or Token are empty or null");
-        else if(!(req.contentType().equals("application/json")))
+        else if(!req.contentType().equals("application/json"))
             halt(400, "Content-Type must be json!");
 
-        if(userAgent == null || !(userAgent.startsWith("statuspage.io")))
+        if(userAgent == null || !userAgent.startsWith("statuspage.io"))
             halt(401, "Invalid User-Agent");
 
         String configToken = app.getConfig().incidentWebhooks.get(id);
         if(configToken == null)
             halt(404, "ID Not Found");
-        else if(!(token.equals(configToken)))
+        else if(!token.equals(configToken))
             halt(403, "Invalid Token");
 
         res.status(204);
-        return handle(req.body(), id);
+        handle(req.body(), id);
+        return "";
     }
 
-    private String handle(String body, String id)
+    private void handle(String body, String id)
     {
         JsonObject json = app.getGson().fromJson(body, JsonObject.class);
-        if(!(json.has("incident")))
-            return "";
+        StatusApp.LOGGER.debug("Received payload: {}", body);
+
+        if(!json.has("incident"))
+            return;
 
         Incident incident = app.getGson().fromJson(json.get("incident"), Incident.class);
         Incident.Update update = incident.updates.stream().findFirst().orElse(null);
         if(update == null)
-            return "";
+            return;
 
+        StatusApp.LOGGER.info("Received incident update for {}", id);
         StatusApp.Webhooks clients = app.getClients().get(id);
         clients.getIncidents().send(embed(incident, update));
-        return "";
+        app.getWatcher().refreshPage(id); // trigger an update
     }
 
     private WebhookEmbed embed(Incident incident, Incident.Update update)

@@ -50,6 +50,7 @@ public class StatusApp
     private final OkHttpClient httpClient;
     private final Map<String, Webhooks> clients;
     private final ExecutorService threadPool;
+    private final StatuspageWatcher watcher;
 
     public StatusApp()
     {
@@ -58,6 +59,7 @@ public class StatusApp
         this.httpClient = new OkHttpClient();
         this.clients = new HashMap<>();
         this.threadPool = Executors.newFixedThreadPool(config.watchedPages.size());
+        this.watcher = new StatuspageWatcher(this);
 
         for(Config.WatchedPage page : config.watchedPages)
         {
@@ -68,7 +70,7 @@ public class StatusApp
 
         // Start task
         Executors.newSingleThreadScheduledExecutor()
-                .scheduleWithFixedDelay(new StatuspageWatcher(this), 5, 5 * 60, TimeUnit.SECONDS);
+                .scheduleWithFixedDelay(watcher, 5, 5 * 60, TimeUnit.SECONDS);
 
         new IncidentsServer(this);
     }
@@ -96,6 +98,11 @@ public class StatusApp
     public ExecutorService getThreadPool()
     {
         return threadPool;
+    }
+
+    public StatuspageWatcher getWatcher()
+    {
+        return watcher;
     }
 
     public static void main(String[] args)
